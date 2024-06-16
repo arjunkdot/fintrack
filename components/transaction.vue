@@ -1,7 +1,7 @@
 <template>
   <div
-    class="grid grid-cols-2 py-4 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-    <div class="flex items-center justify-between">
+    class="grid grid-cols-3 py-4 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+    <div class="flex items-center justify-between space-x-4 col-span-2">
       <div class="flex items-center space-x-2">
         <UIcon :name="icon" :class="[iconColor]" />
         <div>{{ transaction.description }}</div>
@@ -29,7 +29,7 @@ const props = defineProps({
   transaction: Object,
 });
 const emit = defineEmits(["delete"]);
-const isIncome = computed(() => props.transaction.type === "income");
+const isIncome = computed(() => props.transaction.type === "Income");
 const icon = computed(() =>
   isIncome.value ? "i-heroicons-arrow-up-right" : "i-heroicons-arrow-down-left"
 );

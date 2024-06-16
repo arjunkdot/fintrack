@@ -43,12 +43,15 @@
       </div>
     </div>
     <div>
+      <TransactionModal v-model="isOpen" @save="refreshTransactions()" />
+
       <UButton
         icon="i-heroicons-plus-circle"
         color="white"
         variant="solid"
         label="Add"
-        aria-label="Add" />
+        aria-label="Add"
+        @click="isOpen = true" />
     </div>
   </section>
 
@@ -76,12 +79,12 @@ const selectedView = ref(transactionViewOptions[1]);
 const supabase = useSupabaseClient();
 const transactions = ref([]);
 const isLoading = ref(false);
-
+const isOpen = ref(false);
 const income = computed(() =>
-  transactions.value.filter((t) => t.type === "income")
+  transactions.value.filter((t) => t.type === "Income")
 );
 const expense = computed(() =>
-  transactions.value.filter((t) => t.type === "expense")
+  transactions.value.filter((t) => t.type === "Expense")
 );
 
 const incomeCount = computed(() => income.value.length);
@@ -97,7 +100,10 @@ const fetchTransactions = async () => {
   isLoading.value = true;
   try {
     const { data } = await useAsyncData("transactions", async () => {
-      const { data, error } = await supabase.from("transactions").select();
+      const { data, error } = await supabase
+        .from("transactions")
+        .select()
+        .order("created_at", { ascending: false });
 
       if (error) return [];
       return data;

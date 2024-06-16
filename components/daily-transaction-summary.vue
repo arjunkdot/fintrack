@@ -14,7 +14,7 @@ const props = defineProps({
 
 const sum = computed(() => {
   return props.transactions.reduce((acc, transaction) => {
-    if (transaction.type === "income") {
+    if (transaction.type === "Income") {
       return acc + transaction.amount;
     } else {
       return acc - transaction.amount;
