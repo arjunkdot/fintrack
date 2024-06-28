@@ -86,13 +86,15 @@ const {
     grouped: { byDate },
   },
 } = useFetchTransactions(current);
+const isOpen = ref(false);
+
 const {
+  refresh: refreshPrevious,
   transactions: {
     incomeTotal: previousIncomeTotal,
     expenseTotal: previousExpenseTotal,
   },
 } = useFetchTransactions(current);
-const isOpen = ref(false);
-
 await refresh();
+await refreshPrevious();
 </script>
