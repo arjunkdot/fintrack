@@ -38,24 +38,19 @@ const iconColor = computed(() =>
 );
 const { currency } = useCurrency(props.transaction.amount);
 const isLoading = ref(false);
-const toast = useToast();
+const { toastSuccess, toastError } = useAppToast();
 const supabase = useSupabaseClient();
 const deleteTransaction = async () => {
   isLoading.value = true;
   try {
     await supabase.from("transactions").delete().eq("id", props.transaction.id);
-    toast.add({
+    toastSuccess({
       title: "Transaction deleted",
-      icon: "i-heroicons-check-circle",
-      color: "green",
     });
     emit("delete", props.transaction.id);
   } catch (e) {
-    console.log(e);
-    toast.add({
+    toastError({
       title: "Item could not be deleted.",
-      icon: "i-heroicons-exclamation-circle",
-      color: "red",
     });
   } finally {
     isLoading.value = false;
