@@ -1,9 +1,9 @@
 <template>
   <header class="flex justify-between items-center">
-    <NuxtLin to="/" class="text-xl font-bold flex items-center gap-2">
+    <NuxtLink to="/" class="text-xl font-bold flex items-center gap-2">
       <img src="/logo.svg" alt="Fintrack Logo" width="24" height="24" />
       Fintrack
-    </NuxtLin>
+    </NuxtLink>
     <div>
       <UDropdown
         :items="items"
