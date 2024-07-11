@@ -19,6 +19,10 @@
           variant="ghost"
           trailing-icon="i-heroicons-ellipsis-horizontal"
           :loading="isLoading" />
+        <TransactionModal
+          v-model="isOpen"
+          :transaction="transaction"
+          @save="emit('edit')" />
       </UDropdown>
     </div>
   </div>
@@ -28,7 +32,7 @@
 const props = defineProps({
   transaction: Object,
 });
-const emit = defineEmits(["delete"]);
+const emit = defineEmits(["delete", "edit"]);
 const isIncome = computed(() => props.transaction.type === "Income");
 const icon = computed(() =>
   isIncome.value ? "i-heroicons-arrow-up-right" : "i-heroicons-arrow-down-left"
@@ -40,6 +44,9 @@ const { currency } = useCurrency(props.transaction.amount);
 const isLoading = ref(false);
 const { toastSuccess, toastError } = useAppToast();
 const supabase = useSupabaseClient();
+
+const isOpen = ref(false);
+
 const deleteTransaction = async () => {
   isLoading.value = true;
   try {
@@ -61,9 +68,7 @@ const items = [
     {
       label: "Edit",
       icon: "i-heroicons-pencil-square-20-solid",
-      click: () => {
-        console.log("Edit");
-      },
+      click: () => (isOpen.value = true),
     },
     {
       label: "Delete",

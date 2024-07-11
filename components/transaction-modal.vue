@@ -1,7 +1,7 @@
 <template>
   <UModal v-model="isOpen">
     <UCard>
-      <template #header> Add Transaction </template>
+      <template #header> {{ isEditing ? "Edit" : "Add" }} Transaction </template>
       <UForm :state="state" :schema="schema" ref="form" @submit="save">
         <UFormGroup label="Amount" :required="true" name="amount" class="mb-4">
           <UInput
@@ -10,57 +10,56 @@
             min="0"
             step="0.01"
             v-model.number="state.amount"
-            placeholder="Enter an amount" />
+            placeholder="Enter an amount"
+          />
         </UFormGroup>
         <UFormGroup label="Type" :required="true" name="type" class="mb-4">
           <USelect
             name="type"
             :options="transactionTypes"
             placeholder="Select a type"
-            v-model="state.type" />
+            :disabled="isEditing"
+            v-model="state.type"
+          />
         </UFormGroup>
         <UFormGroup
           label="Transaction Date"
           :required="true"
           name="created_at"
-          class="mb-4">
+          class="mb-4"
+        >
           <UInput
             type="date"
             name="created_at"
             icon="i-heroicons-calendar-20-solid"
             placeholder="Pick a date"
-            v-model="state.created_at" />
+            v-model="state.created_at"
+          />
         </UFormGroup>
-        <UFormGroup
-          label="Description"
-          hint="Optional"
-          name="description"
-          class="mb-4">
+        <UFormGroup label="Description" hint="Optional" name="description" class="mb-4">
           <UInput
             type="text"
             name="description"
             placeholder="Describe this transaction"
-            v-model="state.description" />
+            v-model="state.description"
+          />
         </UFormGroup>
         <UFormGroup
           label="Category"
           :required="true"
           name="category"
           class="mb-4"
-          v-if="state.type === 'Expense'">
+          v-if="state.type === 'Expense'"
+        >
           <USelect
             name="category"
             :options="transactionCategories"
             placeholder="Select a category"
-            v-model="state.category" />
+            v-model="state.category"
+          />
         </UFormGroup>
 
-        <UButton
-          type="submit"
-          variant="solid"
-          label="Save"
-          :loading="isLoading"
-          block />
+        <UButton type="submit" variant="solid" label="Save" :loading="isLoading" block />
       </UForm>
     </UCard>
   </UModal>
@@ -107,7 +106,7 @@ const save = async () => {
   try {
     const { error } = await supabase
       .from("transactions")
-      .upsert({ ...state.value });
+      .upsert({ ...state.value, id: props.transaction?.id });
     if (!error) {
       toastSuccess({
         title: "Transaction added.",
@@ -116,7 +115,7 @@ const save = async () => {
       emit("save");
       return;
     }
-    throw e;
+    throw error;
   } catch (e) {
     toastError({
       title: "Transaction could not be saved",
@@ -127,17 +126,32 @@ const save = async () => {
   }
 };
 const emit = defineEmits(["update:modelValue", "save"]);
-const props = defineProps(["modelValue"]);
-const initialState = ref({
-  type: undefined,
-  amount: 0,
-  date: undefined,
-  description: undefined,
-  category: undefined,
+const props = defineProps({
+  modelValue: Boolean,
+  transaction: {
+    type: Object,
+    required: false,
+  },
 });
-const state = ref({
-  ...initialState.value,
-});
+const isEditing = computed(() => !!props.transaction);
+const initialState = ref(
+  isEditing.value
+    ? {
+        type: props.transaction.type,
+        amount: props.transaction.amount,
+        created_at: props.transaction.created_at.split("T")[0],
+        description: props.transaction.description,
+        category: props.transaction.category,
+      }
+    : {
+        type: undefined,
+        amount: 0,
+        created_at: undefined,
+        description: undefined,
+        category: undefined,
+      }
+);
+const state = ref({ ...initialState.value });
 
 const resetForm = () => {
   Object.assign(state.value, initialState.value);

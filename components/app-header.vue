@@ -1,11 +1,15 @@
 <template>
   <header class="flex justify-between items-center">
-    <NuxtLink to="/" class="text-xl font-bold">Fintrack</NuxtLink>
+    <NuxtLin to="/" class="text-xl font-bold flex items-center gap-2">
+      <img src="/logo.svg" alt="Fintrack Logo" width="24" height="24" />
+      Fintrack
+    </NuxtLin>
     <div>
       <UDropdown
         :items="items"
         :ui="{ item: { disabled: 'cursor-text select-text' }, width: 'w-64' }"
-        v-if="user">
+        v-if="user"
+      >
         <UAvatar :src="url" alt="Avatar" />
 
         <template #account>
@@ -22,7 +26,8 @@
 
           <UIcon
             :name="item.icon"
-            class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto" />
+            class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto"
+          />
         </template>
       </UDropdown>
     </div>
