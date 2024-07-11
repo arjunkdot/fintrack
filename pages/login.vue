@@ -6,12 +6,9 @@
         label="Email"
         name="email"
         :required="true"
-        help="You will receive an email the confirmation link.">
-        <UInput
-          type="email"
-          placeholder="email"
-          :required="true"
-          v-model="email" />
+        help="You will receive an email the confirmation link."
+      >
+        <UInput type="email" placeholder="email" :required="true" v-model="email" />
       </UFormGroup>
       <UButton
         type="submit"
@@ -27,8 +24,7 @@
     <template #header>Email has been sent!</template>
     <div class="text-center">
       <p class="mb-4">
-        We have sent an email to <strong>{{ email }}</strong> with a link to
-        sign in.
+        We have sent an email to <strong>{{ email }}</strong> with a link to sign in.
       </p>
       <p><strong>Important:</strong> the link will expire in 5 minutes.</p>
     </div>
@@ -41,7 +37,7 @@ const email = ref("");
 const pending = ref(false);
 const { toastError } = useAppToast();
 const supabase = useSupabaseClient();
-
+const redirectUrl = useRuntimeConfig().public.baseUrl;
 useRedirectIfAuthenticated();
 const handleLogin = async () => {
   pending.value = true;
@@ -50,7 +46,7 @@ const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: "http://localhost:3000/confirm",
+        emailRedirectTo: `${redirectUrl}/confirm`,
       },
     });
 
