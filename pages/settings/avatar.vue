@@ -4,7 +4,8 @@
       <UFormGroup
         label="Current avatar"
         class="w-full"
-        help="This would be blank by default">
+        help="This would be blank by default"
+      >
         <UAvatar :src="url" size="3xl" />
       </UFormGroup>
     </div>
@@ -14,7 +15,8 @@
         label="New avatar"
         class="w-full"
         name="avatar"
-        help="After choosing an image click Save to actually upload the new avatar">
+        help="After choosing an image click Save to actually upload the new avatar"
+      >
         <UInput type="file" ref="fileInput" />
       </UFormGroup>
     </div>
@@ -26,12 +28,12 @@
       label="Save"
       :loading="uploading"
       :disabled="uploading"
-      @click="saveAvatar" />
+      @click="saveAvatar"
+    />
   </div>
 </template>
 
 <script setup>
-import { v4 as uuidv4 } from "uuid";
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 
@@ -48,17 +50,15 @@ const saveAvatar = async () => {
   }
 
   const fileExt = file.name.split(".").pop();
-  const fileName = `${uuidv4()}.${fileExt}`;
+  const fileName = `${Math.random()}.${fileExt}`;
 
   try {
     uploading.value = true;
     const currentAvatarUrl = user.value.user_metadata?.avatar_url;
-    const { error } = await supabase.storage
-      .from("avatars")
-      .upload(fileName, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+    const { error } = await supabase.storage.from("avatars").upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
     if (error) throw error;
     await supabase.auth.updateUser({
       data: {
@@ -66,9 +66,7 @@ const saveAvatar = async () => {
       },
     });
     if (currentAvatarUrl) {
-      const { error } = await supabase.storage
-        .from("avatars")
-        .remove([currentAvatarUrl]);
+      const { error } = await supabase.storage.from("avatars").remove([currentAvatarUrl]);
       if (error) throw error;
     }
     fileInput.value.input.value = null;
